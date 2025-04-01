@@ -29,16 +29,25 @@ Set tsRead = fso.OpenTextFile(pathsFile, 1)
 
 Do Until tsRead.AtEndOfStream
   line = tsRead.ReadLine
-  trimmedLine = LTrim(line)
+  trimmedLine = Trim(line)
   If Len(trimmedLine) > 0 Then
     If Not (Left(trimmedLine, 1) = "#" Or Left(trimmedLine, 1) = ";" Or Left(trimmedLine, 2) = "//") Then
-      If count = 0 Then
-        paths(0) = trimmedLine
-      Else
-        ReDim Preserve paths(count)
-        paths(count) = trimmedLine
+      If (Left(trimmedLine, 1) = """" And Right(trimmedLine, 1) = """") Then
+        If Len(trimmedLine) > 2 Then
+          trimmedLine = Mid(trimmedLine, 2, Len(trimmedLine) - 2)
+        Else
+          trimmedLine = ""
+        End If
       End If
-      count = count + 1
+      If Len(trimmedLine) > 0 Then
+        If count = 0 Then
+          paths(0) = trimmedLine
+        Else
+          ReDim Preserve paths(count)
+          paths(count) = trimmedLine
+        End If
+        count = count + 1
+      End If
     End If
   End If
 Loop
